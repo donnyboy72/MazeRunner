@@ -1,7 +1,6 @@
 import javax.swing.JFrame;
 
 public class App {
-
 	public static void main(String[] args) {
 		int width = 1200;
 		int height = 800; 
@@ -13,12 +12,11 @@ public class App {
 		f.setResizable(false);
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		Maze evo = new Maze(width,height);
-		f.add(evo);
+		MazeRunner mazeRunner = new MazeRunner(width,height);
+		f.add(mazeRunner);
 		f.pack();
 		
 		f.setVisible(true);
 
 	}
-
 }
