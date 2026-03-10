@@ -58,13 +58,9 @@ public class MazeRunner extends JPanel implements ActionListener, KeyListener
 				mazeGrid.add(new Tile(i*tileSize, j*tileSize));
 	}
 
-	public boolean checkIfallTilesVisited()
-	{
-		for(Tile tile: mazeGrid)
-			if(!tile.visited) return false;
-		System.out.println("Done");
-		return true;
-	}
+	
+	///////////////////////////////////////////////////////////////////////////////////////
+	
 	public void paintComponent(Graphics g)
 	{
 		super.paintComponent(g);
@@ -87,6 +83,20 @@ public class MazeRunner extends JPanel implements ActionListener, KeyListener
 		}
 		
 	}
+	
+	/////////////////////////////////////////////////////////////////////////////////////////
+	
+	public boolean checkIfallTilesVisited()
+	{
+		for(Tile tile: mazeGrid)
+			if(!tile.visited) return false;
+		System.out.println("Done");
+		return true;
+	}
+	
+	/////////////////////////////////////////////////////////////////////////////////////////
+
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(!checkIfallTilesVisited())
