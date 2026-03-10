@@ -12,7 +12,7 @@ public class MazeRunner extends JPanel implements ActionListener, KeyListener
 		
 	int windowW; //width of window
 	int windowH; //height of window
-	int tileSize = 10; // size of tiles
+	int tileSize = 25; // size of tiles
 	
 	Tile[][] maze;
 	Tile start;	
@@ -35,16 +35,15 @@ public class MazeRunner extends JPanel implements ActionListener, KeyListener
 		mazeGrid = new ArrayList<>();
 		buildGrid();
 		random = new Random();
-		System.out.println(mazeGrid.size());
 		gameLoop = new Timer(1,this);
 		gameLoop.start();
 	}
 
 	private void randomRemoveLines() {
 	
-		int number = random.nextInt(5841);
+		int number = random.nextInt(mazeGrid.size());
 		int ranNum = random.nextInt(4);
-	
+		mazeGrid.get(number).setVisited(true);
 			if(ranNum == 1) mazeGrid.get(number).setTop(false);
 			if(ranNum == 2) mazeGrid.get(number).setBottom(false);
 			if(ranNum == 3) mazeGrid.get(number).setRight(false);
@@ -54,11 +53,18 @@ public class MazeRunner extends JPanel implements ActionListener, KeyListener
 	private void buildGrid() 
 	{
 		
-		for(int i = tileSize; i < 109; i ++) // x pos 100 -> 1080 jumping by 10
-			for(int j = tileSize; j < 69; j++) // y pos 100 -> 680 jumping by 10
+		for(int i = 4; i < 43; i ++) // x pos 100 -> 1080 jumping by 25
+			for(int j = 4; j < 27; j++) // y pos 100 -> 680 jumping by 25
 				mazeGrid.add(new Tile(i*tileSize, j*tileSize));
 	}
 
+	public boolean checkIfallTilesVisited()
+	{
+		for(Tile tile: mazeGrid)
+			if(!tile.visited) return false;
+		System.out.println("Done");
+		return true;
+	}
 	public void paintComponent(Graphics g)
 	{
 		super.paintComponent(g);
@@ -83,7 +89,8 @@ public class MazeRunner extends JPanel implements ActionListener, KeyListener
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		randomRemoveLines();
+		if(!checkIfallTilesVisited())
+			randomRemoveLines();
 		repaint();
 	}
 
