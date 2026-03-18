@@ -9,18 +9,21 @@ import javax.swing.Timer;
 
 public class MazeRunner extends JPanel implements ActionListener, KeyListener
 {
-		
+	
+	//graphics set up
 	int windowW; //width of window
 	int windowH; //height of window
 	int tileSize = 25; // size of tiles
 	
+	//maze set up
+	int mazeWidth;
+	int mazeHeight;
 	Tile[][] maze;
-	Tile start;	
 	
-	ArrayList<Tile> mazeGrid;
+	//Prims set up
+	
 	Timer gameLoop;
-	
-	Random random;
+	Random random = new Random();
 	/*
 	 * Constructor, this is where the window is created and all the function calls
 	 * are made to build the game
@@ -32,34 +35,33 @@ public class MazeRunner extends JPanel implements ActionListener, KeyListener
 		this.windowH = height;
 		setPreferredSize(new Dimension(windowW,windowH));
 		setBackground(new Color(47,47,47));
-		mazeGrid = new ArrayList<>();
-		buildGrid();
-		random = new Random();
+		mazeWidth = 39;
+		mazeHeight = 23;
+		maze = new Tile[mazeWidth][mazeHeight];
+		buildMaze();
+		
 		gameLoop = new Timer(1,this);
 		gameLoop.start();
 	}
 
-	private void randomRemoveLines() {
-	
-		int number = random.nextInt(mazeGrid.size());
-		int ranNum = random.nextInt(4);
-		mazeGrid.get(number).setVisited(true);
-			if(ranNum == 1) mazeGrid.get(number).setTop(false);
-			if(ranNum == 2) mazeGrid.get(number).setBottom(false);
-			if(ranNum == 3) mazeGrid.get(number).setRight(false);
-			if(ranNum == 4) mazeGrid.get(number).setLeft(false);
-	}
-
-	private void buildGrid() 
+	private void buildMaze() 
 	{
 		
-		for(int i = 4; i < 43; i ++) // x pos 100 -> 1080 jumping by 25
-			for(int j = 4; j < 27; j++) // y pos 100 -> 680 jumping by 25
-				mazeGrid.add(new Tile(i*tileSize, j*tileSize));
+		for(int i = 0; i < mazeWidth; i ++) // x pos 100 -> 1080 jumping by 25
+			for(int j = 0; j < mazeHeight; j++) // y pos 100 -> 680 jumping by 25
+				maze[i][j] = new Tile(i*tileSize +100,j*tileSize+100);
+		
+		//assign start of maze on left side of grid
+		maze[0][random.nextInt(mazeHeight)].setStart(true);
+		
+		//assign end of maze on right side of grid
+		maze[38][random.nextInt(mazeHeight)].setEnd(true);
 	}
 
 	
-	///////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+//                                    Graphics
+/////////////////////////////////////////////////////////////////////////////////////////
 	
 	public void paintComponent(Graphics g)
 	{
@@ -71,28 +73,54 @@ public class MazeRunner extends JPanel implements ActionListener, KeyListener
 	{
 		
 		//draw tile for game
-		for(Tile tile: mazeGrid)
-		{
-			g.setColor(Color.WHITE);
-			int x = tile.x;
-			int y = tile.y;
-			if(tile.getBottom()) g.drawLine(x, y+tileSize, x+tileSize, y+tileSize);
-			if(tile.getTop()) g.drawLine(x, y, x+tileSize, y);
-			if(tile.getRight()) g.drawLine(x+tileSize, y, x+tileSize, y+tileSize);
-			if(tile.getLeft()) g.drawLine(x, y, x, y+tileSize);
+		for(int i = 0; i < mazeWidth; i ++) {
+			for(int j = 0; j < mazeHeight; j++) {
+				Tile tile = maze[i][j];
+				int x = tile.x;
+				int y = tile.y;
+				
+				if(tile.getStart()) 
+				{
+					g.setColor(Color.GREEN);
+					g.fillRect(x, y, tileSize, tileSize);
+				}
+				
+				if(tile.getEnd()) 
+				{
+					g.setColor(Color.RED);
+					g.fillRect(x, y, tileSize, tileSize);
+				}
+				
+				g.setColor(Color.WHITE);
+				if(tile.getBottom()) g.drawLine(x, y+tileSize, x+tileSize, y+tileSize);
+				if(tile.getTop()) g.drawLine(x, y, x+tileSize, y);
+				if(tile.getRight()) g.drawLine(x+tileSize, y, x+tileSize, y+tileSize);
+				if(tile.getLeft()) g.drawLine(x, y, x, y+tileSize);
+				
+				
+			}
 		}
+			
 		
 	}
 	
 	/////////////////////////////////////////////////////////////////////////////////////////
+	//                             Randomized Depth-First Search
+	/////////////////////////////////////////////////////////////////////////////////////////
 	
 	public boolean checkIfallTilesVisited()
 	{
-		for(Tile tile: mazeGrid)
-			if(!tile.visited) return false;
+		for(int i = 0; i < mazeWidth; i ++) {
+			for(int j = 0; j < mazeHeight; j++) {
+				Tile tile = maze[i][j];
+				if(!tile.visited) return false;
+			}
+		}
 		System.out.println("Done");
 		return true;
 	}
+	
+	
 	
 	/////////////////////////////////////////////////////////////////////////////////////////
 
@@ -100,7 +128,7 @@ public class MazeRunner extends JPanel implements ActionListener, KeyListener
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(!checkIfallTilesVisited())
-			randomRemoveLines();
+			//randomRemoveLines();
 		repaint();
 	}
 

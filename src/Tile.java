@@ -7,6 +7,8 @@ public class Tile {
 	boolean left;
 	boolean right;
 	boolean visited;
+	boolean start;
+	boolean end;
 	
 	Tile(int x, int y)
 	{
@@ -17,6 +19,8 @@ public class Tile {
 		left = true;
 		right = true;
 		visited = false;
+		start = false;
+		end = false;
 	}
 	public String toString() {
 		return "X value " + this.x + "Y value " + this.y;
@@ -48,6 +52,14 @@ public class Tile {
 	public void setVisited(boolean visited) {
 		this.visited = visited;
 	}
+	
+	public void setStart(boolean start) {
+		this.start = start;
+	}
+
+	public void setEnd(boolean end) {
+		this.end = end;
+	}
 
 	public int getX() {
 		return x;
@@ -76,5 +88,14 @@ public class Tile {
 	public boolean getVisited() {
 		return visited;
 	}
+	
+	public boolean getStart() {
+		return start;
+	}
+
+	public boolean getEnd() {
+		return end;
+	}
+
 
 }
