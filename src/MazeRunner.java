@@ -26,14 +26,18 @@ public class MazeRunner extends JPanel implements ActionListener, KeyListener
 	int end;
 	Tile[][] maze;
 	
-	//Player set up
-	int playerX;
-	int playerY;
-	int velocityX;
-	int velocityY;
+	//Player
+	int startX = 0;
+	int startY = start;
+	PlayerMoves playerMoves;
 	
+	//logic
 	Timer gameLoop;
 	Random random = new Random();
+	
+	//Colors
+	Color bG = new Color(47,47,47);
+	Color bbBlue = new Color(14, 165, 233);
 	/*
 	 * Constructor, this is where the window is created and all the function calls
 	 * are made to build the game
@@ -44,7 +48,7 @@ public class MazeRunner extends JPanel implements ActionListener, KeyListener
 		this.windowW = width;
 		this.windowH = height;
 		setPreferredSize(new Dimension(windowW,windowH));
-		setBackground(new Color(47,47,47));
+		setBackground(bG);
 		
 		addKeyListener(this);
 		setFocusable(true);
@@ -54,16 +58,15 @@ public class MazeRunner extends JPanel implements ActionListener, KeyListener
 		mazeHeight = 23;
 		maze = new Tile[mazeWidth][mazeHeight];
 		
+		playerMoves = new PlayerMoves(1000); //maze size is 897 this gives a cushion to that 
 		
 		start = random.nextInt(mazeHeight);
+		end = random.nextInt(mazeHeight);
+		
+		//set up player cords
+		playerMoves.push(0,start);
+		
 		buildMaze();
-		
-		playerX = maze[0][start].getX() + 3;
-		playerY = maze[0][start].getY() + 3;
-		
-		
-		velocityX = 0;
-		velocityY = 0;
 		
 		gameLoop = new Timer(1,this);
 		gameLoop.start();
@@ -79,25 +82,15 @@ public class MazeRunner extends JPanel implements ActionListener, KeyListener
 		//assign start of maze on left side of grid
 
 		maze[0][start].setStart(true);
-		
-		//set up player cords
-		
+		maze[0][start].setPlayed(true);
 		
 		//assign end of maze on right side of grid
-		end = random.nextInt(mazeHeight);
 		maze[38][end].setEnd(true);
 		
 		
 		
 		DFS(random.nextInt(mazeWidth),random.nextInt(mazeHeight));
 	}
-	
-	public void move() 
-	{
-		playerX += velocityX;
-		playerY += velocityY;
-	}
-
 	
 /////////////////////////////////////////////////////////////////////////////////////////
 //                                    Graphics
@@ -119,6 +112,12 @@ public class MazeRunner extends JPanel implements ActionListener, KeyListener
 				int x = tile.x;
 				int y = tile.y;
 				
+				if(tile.getPlayed()) 
+				{
+					g.setColor(bbBlue);
+					g.fillRect(x, y, tileSize, tileSize);
+				}
+				
 				if(tile.getStart()) 
 				{
 					g.setColor(Color.GREEN);
@@ -131,6 +130,8 @@ public class MazeRunner extends JPanel implements ActionListener, KeyListener
 					g.fillRect(x, y, tileSize, tileSize);
 				}
 				
+				
+				
 				g.setColor(Color.WHITE);
 				if(tile.getBottom()) g.drawLine(x, y+tileSize, x+tileSize, y+tileSize);
 				if(tile.getTop()) g.drawLine(x, y, x+tileSize, y);
@@ -141,11 +142,11 @@ public class MazeRunner extends JPanel implements ActionListener, KeyListener
 			}
 		}
 		
-		//draw player
-		g.setColor(Color.BLUE);
-		g.fillOval(playerX, playerY, 20,20);
-			
-		
+		if(maze[mazeWidth-1][end].getPlayed()) 
+		{
+			g.setColor(bbBlue);
+			g.drawString("You Won", windowW/2-70, 75);
+		}
 	}
 	
 	/////////////////////////////////////////////////////////////////////////////////////////
@@ -225,14 +226,120 @@ public class MazeRunner extends JPanel implements ActionListener, KeyListener
 	}
 	
 	/////////////////////////////////////////////////////////////////////////////////////////
+	//                             Player moves
+	/////////////////////////////////////////////////////////////////////////////////////////
+	
+	class PlayerMoves{
+		
+		private int maxSize;
+		private int[] moves;
+		private int top;
+		private int startX;
+		private int startY;
+		
+		public PlayerMoves(int size) {
+			maxSize = size;
+			moves = new int[maxSize];
+			top = -1;
+		}
+		
+		public void push(int num)
+		{
+			moves[++top] = num;
+		}
+		
+		public void push(int x, int y)
+		{
+			this.startX = x;
+			this.startY = y;
+			
+		}
+		public int pop()
+		{
+			return moves[top--];
+		}
+		
+		public boolean isEmpty()
+		{
+			return (top == -1);
+		}
+		
+		public void dircetions(int num)
+		{
+			switch(num)
+			{
+				case 0: // left direction
+					if(startX <= 0) return; //keeps from going of left side of board
+					if(top >= 0 && moves[top] == 2) {
+						pop();
+						//maze[startX][startY].setPlayed(false);
+						maze[startX--][startY].setPlayed(false);
+
+					}
+					else {
+						if(maze[startX][startY].getLeft()) return;
+						push(num);
+						maze[--startX][startY].setPlayed(true);
+					}
+					break;
+					
+				case 1: // up direction
+					if(startY <= 0) return; // keeps from going off top side of board
+					if(top >= 0 && moves[top] == 3){
+						pop();
+						//maze[startX][startY].setPlayed(false);
+						maze[startX][startY--].setPlayed(false);
+					}
+					else {
+						if(maze[startX][startY].getTop()) return;
+						push(num);
+						maze[startX][--startY].setPlayed(true);
+					}
+					break;
+					
+				case 2: // right direction
+					if(startX >= mazeWidth) return; // keeps from going off right side of board
+					if(top >= 0 && moves[top] == 0){
+						pop();
+						//maze[startX][startY].setPlayed(false);
+						maze[startX++][startY].setPlayed(false);
+					}
+					else {
+						if(maze[startX][startY].getRight()) return;
+						push(num);
+						maze[++startX][startY].setPlayed(true);
+					}
+					break;
+					
+				case 3:  // down direction
+					if(startY >= mazeHeight) return; // keeps from going bottom top side of board
+					if(top >= 0 && moves[top] == 1){
+						pop();
+						//maze[startX][startY].setPlayed(false);
+						maze[startX][startY++].setPlayed(false);
+					}
+					else {
+						if(maze[startX][startY].getBottom()) return;
+						push(num);
+						maze[startX][++startY].setPlayed(true);
+					}
+					break;
+					
+				default:
+					push(num);
+			}
+		}
+		
+	}
+	
+
+	/////////////////////////////////////////////////////////////////////////////////////////
 	
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		//if(checkIfAllTilesVisited()) 
-			move();
-			repaint();
-		
-		
+	public void actionPerformed(ActionEvent e) { 
+		repaint();
+		if(maze[mazeWidth-1][end].getPlayed())
+			gameLoop.stop();
 	}
 
 	@Override
@@ -247,44 +354,37 @@ public class MazeRunner extends JPanel implements ActionListener, KeyListener
 		switch (e.getKeyCode())
 		{
 		case KeyEvent.VK_W,KeyEvent.VK_UP:
-			velocityX = 0;
-			velocityY = -2;
+			playerMoves.dircetions(1);
 			break;
 		case KeyEvent.VK_S,KeyEvent.VK_DOWN:
-			velocityX = 0;
-			velocityY = 2;
+			playerMoves.dircetions(3);
 			break;
 		case KeyEvent.VK_D,KeyEvent.VK_RIGHT:
-			velocityX = 2;
-			velocityY = 0;
+			playerMoves.dircetions(2);
 			break;
 		case KeyEvent.VK_A,KeyEvent.VK_LEFT:
-			velocityX = -2;
-			velocityY = 0;
+			playerMoves.dircetions(0);
 			break;
 		}
 		
 	}
+
 
 	@Override
 	public void keyReleased(KeyEvent e) {
 		switch (e.getKeyCode())
 		{
 		case KeyEvent.VK_W,KeyEvent.VK_UP:
-			velocityX = 0;
-			velocityY = 0;
+			
 			break;
 		case KeyEvent.VK_S,KeyEvent.VK_DOWN:
-			velocityX = 0;
-			velocityY = 0;
+			
 			break;
 		case KeyEvent.VK_D,KeyEvent.VK_RIGHT:
-			velocityX = 0;
-			velocityY = 0;
+			
 			break;
 		case KeyEvent.VK_A,KeyEvent.VK_LEFT:
-			velocityX = 0;
-			velocityY = 0;
+			
 			break;
 		}
 		
