@@ -1,46 +1,53 @@
-# MazeRunner
+# 🧩 Maze Runner (Java Swing)
 
-MazeRunner is a Java-based project that generates a random maze and automatically finds a path from the start to the goal using different search algorithms. The goal of this project is to demonstrate algorithmic problem-solving, recursion, and data structures such as queues and arrays.
-
-This project was developed as part of a Java programming course to explore object-oriented programming and classic pathfinding algorithms.
+A procedurally generated maze game built using Java Swing. Navigate from the start tile to the end tile using keyboard controls while the maze is generated dynamically using a randomized Depth-First Search algorithm.
 
 ---
 
-## Project Goals
+## 🚀 Features
 
-The main objectives of this project are to:
-
-- Generate a random maze using a maze generation algorithm
-- Solve the maze using different search strategies
-- Compare the behavior of Depth-First Search (DFS) and Breadth-First Search (BFS)
-- Demonstrate core Java concepts such as recursion, interfaces, and object-oriented design
-
----
-
-## Features
-
-- Random maze generation
-- Maze solving using multiple algorithms
-- Breadth-First Search (guarantees shortest path)
-- Depth-First Search using recursion
-- Object-oriented design with interchangeable solver strategies
-- Console visualization of the maze and solution path
+- 🔀 **Random Maze Generation**
+  - Uses **Depth-First Search (DFS)** to create a unique maze every run
+- 🎮 **Player Movement System**
+  - Move using WASD or Arrow Keys
+  - Backtracking removes your path visually
+- 🧠 **Path Tracking**
+  - Stack-based movement system tracks player decisions
+- 🎨 **Simple Visual UI**
+  - Clean grid-based rendering using Java Swing
+- 🏁 **Win Condition**
+  - Reach the red tile to win
 
 ---
 
-## Technologies Used
+## 🕹️ Controls
 
-- **Java**
-- Object-Oriented Programming
-- Recursion
-- Interfaces and Polymorphism
-- Data Structures:
-  - 2D Arrays
-  - Queues
-  - Lists
+| Key | Action |
+|-----|--------|
+| W / ↑ | Move Up |
+| S / ↓ | Move Down |
+| A / ← | Move Left |
+| D / → | Move Right |
 
 ---
 
-## Project Structure
+## 🧱 How It Works
 
-The project is organized into several classes:
+### Maze Generation
+- The maze is built using **Randomized Depth-First Search**
+- Each tile starts with all walls intact
+- Walls are removed as the algorithm explores unvisited neighbors
+
+### Player Movement
+- A custom stack (`PlayerMoves`) tracks movement
+- Moving backward:
+  - Pops the last move
+  - Removes the "played" path visually
+- Prevents illegal moves through walls or outside bounds
+
+---
+
+## 📂 Project Structure
+├── App.java # Entry point, sets up JFrame
+├── MazeRunner.java # Core game logic, rendering, input handling
+├── Tile.java # Represents each maze cell
