@@ -1,4 +1,20 @@
-
+/*
+ * Tile is a class to keep track of all the cells in the maze
+ * It takes in the x and y cords of the tile.
+ * Has boolean values for:
+ * 		top -> the top wall of tile
+ * 		bottom -> the bottom wall of tile
+ * 		left -> the left wall of the tile
+ * 		right -> the right wall of tile
+ * 		visited -> keeps track if tile has been visited
+ * 					this is for the DFS method
+ * 		start -> keeps track of the starting tile
+ * 		end -> keep track of the ending tile
+ * 		played -> keeps track of if the user has gone (played)
+ * 				  on this tile.
+ * 
+ * There are getters and setters for all variables
+ */
 public class Tile {
 	int x;
 	int y;
@@ -10,6 +26,13 @@ public class Tile {
 	boolean start;
 	boolean end;
 	boolean played;
+	
+	/*
+	 * Constructor
+	 * Tile receives the x and y pixels and sets this.x and this.y to those values
+	 * Sets all walls to be true
+	 * Sets all variables that create the game to false
+	 */
 	
 	Tile(int x, int y)
 	{
