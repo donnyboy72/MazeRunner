@@ -51,3 +51,15 @@ A procedurally generated maze game built using Java Swing. Navigate from the sta
 ├── App.java # Entry point, sets up JFrame
 ├── MazeRunner.java # Core game logic, rendering, input handling
 ├── Tile.java # Represents each maze cell
+
+https://github.com/user-attachments/assets/b10266e5-5397-431d-b4c3-a0ff490787e8
+
+
+https://github.com/user-attachments/assets/134e27af-c91b-410c-bfb6-4876f934bf1d
+
+
+
+
+https://github.com/user-attachments/assets/7badba37-b952-4610-81dd-5435949fa8ee
+
+
